@@ -1,0 +1,14 @@
+{
+    "diff": true,
+    "require": [
+        "test/tsconfig.js"
+    ],
+    "extension": [
+        "ts"
+    ],
+    "reporter": "spec",
+    "spec": "test/specs/**/*.spec.ts",
+    "slow": 1500,
+    "timeout": 20000,
+    "recursive": true
+}
