@@ -6,30 +6,12 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import * as inquirer from 'inquirer';
+import { select, input } from '@inquirer/prompts';
 import chalk from 'chalk';
 import * as template from './utils/template';
 import * as shell from 'shelljs';
 
 const CHOICES = fs.readdirSync(path.join(__dirname, 'templates'));
-const QUESTIONS = [
-{
-    name: 'template',
-    type: 'list',
-    message: 'What template would you like to use?',
-    choices: CHOICES
-},
-{
-    name: 'name',
-    type: 'input',
-    message: 'Please input a new project name:'
-},
-{
-    name: 'author',
-    type: 'input',
-    message: 'Please input the project author:'
-}
-];
 
 export interface CliOptions {
     projectName: string;
@@ -41,12 +23,15 @@ export interface CliOptions {
 
 const CURR_DIR = process.cwd();
 
-console.log(chalk.redBright("OpenHPS CLI Tool"));
+console.log(chalk.redBright('OpenHPS CLI Tool'));
 
-inquirer.prompt(QUESTIONS).then(answers => {
-    const projectChoice = answers['template'];
-    const projectName = answers['name'];
-    const projectAuthor = answers['author'];
+async function main(): Promise<void> {
+    const projectChoice = await select({
+        message: 'What template would you like to use?',
+        choices: CHOICES.map((name) => ({ name, value: name })),
+    });
+    const projectName = await input({ message: 'Please input a new project name:' });
+    const projectAuthor = await input({ message: 'Please input the project author:' });
 
     const templatePath = path.join(__dirname, 'templates', projectChoice);
     const tartgetPath = path.join(CURR_DIR, projectName);
@@ -56,8 +41,8 @@ inquirer.prompt(QUESTIONS).then(answers => {
         templateName: projectChoice,
         projectAuthor,
         templatePath,
-        tartgetPath
-    }
+        tartgetPath,
+    };
 
     if (!createProject(tartgetPath)) {
         return;
@@ -66,6 +51,11 @@ inquirer.prompt(QUESTIONS).then(answers => {
     createDirectoryContents(templatePath, projectName, projectAuthor);
 
     postProcess(options);
+}
+
+main().catch((err) => {
+    console.error(chalk.red(err instanceof Error ? err.message : String(err)));
+    process.exitCode = 1;
 });
 
 function createProject(projectPath: string) {
@@ -84,7 +74,7 @@ function createDirectoryContents(templatePath: string, projectName: string, proj
     // read all files/folders (1 level) from template folder
     const filesToCreate = fs.readdirSync(templatePath);
     // loop each file/folder
-    filesToCreate.forEach(file => {
+    filesToCreate.forEach((file) => {
         const origFilePath = path.join(templatePath, file);
 
         // get stats about the current file
