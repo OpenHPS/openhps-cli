@@ -1,9 +1,10 @@
 {
-    "entryPoints": ["./src/index.ts"],
-    "out": "docs/out",
+    "entryPoints": ["../src/index.ts"],
+    "out": "out",
     "exclude": ["**/_internal/**/*"],
     "excludePrivate": true,
     "hideGenerator": true,
     "categorizeByGroup": true,
-    "media": "docs/media"
+    "tsconfig": "../tsconfig/tsconfig.app.json",
+    "entryPointStrategy": "expand"
 }

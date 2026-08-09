@@ -2,7 +2,7 @@ import 'mocha';
 import { expect } from 'chai';
 import { ExampleUnit } from '../../src';
 
-describe("example unit", () => {
+describe('example unit', () => {
     it('should convert celcius to fahrenheit', () => {
         const result = ExampleUnit.CELCIUS.convert(100, ExampleUnit.FAHRENHEIT);
         expect(Math.round(result)).to.equal(212);

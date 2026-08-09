@@ -1,15 +1,21 @@
 {
+    "extends": "./tsconfig.base.json",
     "compilerOptions": {
-        "target": "es6",
+        "target": "ES6",
         "module": "commonjs",
         "moduleResolution": "node",
         "noImplicitAny": false,
         "removeComments": true,
         "preserveConstEnums": true,
-        "declaration": true,
+        "declaration": false,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "sourceMap": false
+        "sourceMap": true,
+        "strict": false
     },
-    "transpileOnline": true
+    "ts-node": {
+        "transpileOnly": false,
+        "files": true
+    },
+    "include": ["../test/**/*.ts"]
 }
