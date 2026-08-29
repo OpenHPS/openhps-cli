@@ -1,2 +1,12 @@
 node_modules/
 dist/
+
+# OpenHPS baseline
+docs/out/
+coverage/
+.nyc_output/
+.cache/
+artifacts/
+test-results.xml
+xunit.xml
+.DS_Store

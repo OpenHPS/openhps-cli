@@ -1,9 +1,9 @@
-import { DataFrame, ProcessingNode, ProcessingNodeOptions } from "@openhps/core";
-import { ExampleDataFrame } from "../data";
+import { DataFrame, ProcessingNode, ProcessingNodeOptions } from '@openhps/core';
+import { ExampleDataFrame } from '../data';
 
 /**
  * Example Processing Node
- * 
+ *
  * ## Expected Behavior
  * It should take in a normal data frame, process it and output an [[ExampleDataFrame]]
  * that includes a domain. All data objects in the data frame should be [[ExampleDataObject]]s
@@ -19,11 +19,8 @@ export class ExampleProcessingNode extends ProcessingNode<DataFrame, ExampleData
 
     public process(frame: DataFrame): Promise<ExampleDataFrame> {
         return new Promise((resolve) => {
-            frame.getObjects().forEach(object => {
-                
-            });
+            frame.getObjects().forEach((object) => {});
             resolve(frame as any);
         });
     }
-    
 }

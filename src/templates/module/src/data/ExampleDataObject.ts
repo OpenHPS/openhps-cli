@@ -1,4 +1,4 @@
-import { DataObject, SerializableObject, SerializableMember } from "@openhps/core";
+import { DataObject, SerializableObject, SerializableMember } from '@openhps/core';
 
 /**
  * Example data object that adds an URI attribute
