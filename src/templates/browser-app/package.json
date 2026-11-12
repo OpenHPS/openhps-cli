@@ -1,14 +1,14 @@
 {
-  "name": "test",
+  "name": "@openhps/<%=projectName%>",
   "version": "0.1.0-alpha.0",
   "license": "Apache-2.0",
   "scripts": {},
   "devDependencies": {
-    "@openhps/core": "^0.2.0-alpha.18",
+    "@openhps/core": ">=1.0.16 <2",
     "webpack": "^5.11.1",
     "webpack-cli": "^4.3.1"
   },
   "dependencies": {
-    "@openhps/opencv": "0.1.0-alpha.15"
+    "@openhps/opencv": ">=1.0.16 <2"
   }
 }

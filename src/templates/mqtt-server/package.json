@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@openhps/core": "^0.3.0-alpha.68",
+    "@openhps/core": ">=1.0.16 <2",
     "@openhps/mqtt": "0.1.0-alpha.2"
   }
 }

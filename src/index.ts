@@ -19,6 +19,7 @@ export interface CliOptions {
     templateName: string;
     templatePath: string;
     tartgetPath: string;
+    targetPath: string;
 }
 
 const CURR_DIR = process.cwd();
@@ -33,6 +34,16 @@ async function main(): Promise<void> {
     const projectName = await input({ message: 'Please input a new project name:' });
     const projectAuthor = await input({ message: 'Please input the project author:' });
 
+    if (!/^[a-z0-9][a-z0-9._-]*$/i.test(projectName)) {
+        console.log(
+            chalk.red(
+                'Invalid project name. Use only letters, numbers, ".", "_" or "-", starting with a letter or number.',
+            ),
+        );
+        process.exitCode = 1;
+        return;
+    }
+
     const templatePath = path.join(__dirname, 'templates', projectChoice);
     const tartgetPath = path.join(CURR_DIR, projectName);
 
@@ -42,6 +53,7 @@ async function main(): Promise<void> {
         projectAuthor,
         templatePath,
         tartgetPath,
+        targetPath: tartgetPath,
     };
 
     if (!createProject(tartgetPath)) {
@@ -50,7 +62,7 @@ async function main(): Promise<void> {
 
     createDirectoryContents(templatePath, projectName, projectAuthor);
 
-    postProcess(options);
+    if (!(await postProcess(options))) process.exitCode = 1;
 }
 
 main().catch((err) => {
@@ -68,7 +80,22 @@ function createProject(projectPath: string) {
     return true;
 }
 
-const SKIP_FILES = ['node_modules', '.template.json'];
+const SKIP_FILES = ['node_modules'];
+
+const TEXT_EXTENSIONS = [
+    '.js',
+    '.json',
+    '.ts',
+    '.tsx',
+    '.mjs',
+    '.cjs',
+    '.md',
+    '.yml',
+    '.yaml',
+    '.html',
+    '.css',
+    '.txt',
+];
 
 function createDirectoryContents(templatePath: string, projectName: string, projectAuthor: string) {
     // read all files/folders (1 level) from template folder
@@ -84,12 +111,16 @@ function createDirectoryContents(templatePath: string, projectName: string, proj
         if (SKIP_FILES.indexOf(file) > -1) return;
 
         if (stats.isFile()) {
-            // read file content and transform it using template engine
-            let contents = fs.readFileSync(origFilePath, 'utf8');
-            contents = template.render(contents, { projectName, projectAuthor });
-            // write file to destination folder
             const writePath = path.join(CURR_DIR, projectName, file);
-            fs.writeFileSync(writePath, contents, 'utf8');
+            if (TEXT_EXTENSIONS.indexOf(path.extname(file)) > -1) {
+                // read file content and transform it using template engine
+                let contents = fs.readFileSync(origFilePath, 'utf8');
+                contents = template.render(contents, { projectName, projectAuthor });
+                fs.writeFileSync(writePath, contents, 'utf8');
+            } else {
+                // render only known text files; copy anything else byte-for-byte
+                fs.copyFileSync(origFilePath, writePath);
+            }
         } else if (stats.isDirectory()) {
             // create folder in destination folder
             fs.mkdirSync(path.join(CURR_DIR, projectName, file));
@@ -102,8 +133,7 @@ function createDirectoryContents(templatePath: string, projectName: string, proj
 function postProcess(options: CliOptions) {
     const isNode = fs.existsSync(path.join(options.templatePath, 'package.json'));
     if (isNode) {
-        shell.cd(options.tartgetPath);
-        const result = shell.exec('npm install');
+        const result = shell.exec('npm install', { cwd: options.tartgetPath });
         if (result.code !== 0) {
             return false;
         }
